@@ -1,0 +1,112 @@
+Exercise 2.1
+
+a) The agent is rational if it maximises the expected performance measure. The performance measure awards one point for each clean square at each time step, over a run of 1000 time steps. We can examine each possible starting state and show that the agent achieves the optimal score given that starting state.
+
+We assume that the sequence of simulation within is step is percept->action->score.
+Since the agent function and the world are both symmetric, we assume without loss of generality that the agent starts in the left square. We are left with four possible starting states:
+
+Clean, Clean
+Dirty, Clean
+Clean, Dirty
+Dirty, Dirty.
+
+In the first case, the agent cannot fail to get a maximal score of 2000 points, regardless of the agent function.
+
+In the second case, there is only one dirty square, and the earlier it is cleaned, the higher the score. Since the agent starts in that square, its first action should be to Suck, and this is indeed the behaviour of the agent function.
+
+In the third case, there is only one dirty square, but it is in the square the agent isn't in. The agent still needs to clean it as early as possible to maximise its score, and the best sequence of actions to do so is Right, Suck. This is indeed the behaviour of the agent function.
+
+In the final case, both squares are dirty. The optimal sequence is to clean the left square which the agent is on, move right, and finally clean the right square. Suck, Right, Suck is the behaviour of the agent function in this case.
+
+Therefore the agent function implements optimal behaviour in all starting states, and the agent is rational.
+
+b) We now treat the case where each movement costs a point. Since the original agent will keep moving even after both squares have been cleaned, its behaviour is no longer optimal; the ideal agent will clean both squares and then stop moving. Since the agent cannot perceive both squares at once, it will require some internal state. Since at most one move is required to clean both squares, a single boolean which is set when the agent moves will suffice.
+
+The following code will implement the optimal agent function:
+
+function Lazy-Sucker([location, status]) returns an action
+    persistent: bool has_moved = false
+    if status == Dirty then return Suck
+    else if location == A and has_moved == false then
+        has_moved = true
+        return Right
+    else if location == B and has_moved == false then
+        has_moved = true
+        return Left
+    else return Suck
+
+The function returns Suck in place of no action, since that is the only available score-neutral action.
+
+c) If clean squares can become dirty, the agent will sometimes need to move even after having cleaned both squares. The optimal frequency of checking squares will depend on the rate at which squares become dirty or the probability of a square becoming dirty; if these are not known then the agent would do well to learn them.
+
+If the geography of the environment is unknown, the agent will need to explore to find dirty squares to clean. If squares cannot become dirty again, it would do better if it knew where it has already cleaned to avoid visiting those squares again, and this will require learning the layout. If they become dirty again, it will again do better if it can know where it has recently cleaned, and so needs to learn the layout.
+
+Exercise 2.2 ugh
+
+Exercise 2.3
+a) False - Disproven by exercise 2.1a), where the reflex-based agent only has partial information but was proved rational.
+b) True - Proven by exercise 2.2a) which gives an environment where the earlier agent cannot be rational.
+c) True - Trivially, any a task environment where the performance measure is a constant value.
+d) False - The input to the agent program is the current percept; the input to the agent function is the complete history of percepts.
+e) False - cf. Alan Turing, On Computable Functions With Applications to the Entsceidungsproblem
+f) True - already implied by c), and other examples of performance measure such as 'actions taken form a uniform random distribution'
+g) True - two task environment can differ in a way that does not affect the optimal behaviour, for example by adding an action which does not affect the environment, or strongly negatively scoring an action that is not used by the agent, or adding a sensor which provides no new information.
+h) False - in some unobservable environment an agent can take a series of pre-determined steps which are optimal given its lack of sensors. For example an agent could navigate a predetermined maze from a predetermined stating point.
+i) False - if there exists a rational poker agent, in a match between copies of this agent some of them would necessarily lose.
+
+Exercise 2.4 ugh
+
+Exercise 2.5 ugh
+
+Exercise 2.6
+a) Yes. For example, the agent in Ex 2.1a) could also be implemented by the program:
+
+function Lazy-Sucker-2([location, state]) returns an action
+    persistent: bool A_visited = false, bool B_visited = false
+    if location == A then A_visited = true
+    if location == B then B_visited = true
+
+    if state == Dirty then return Suck
+    else if location == A and B_visited == false then return Right
+    else if location == B and A_visited == false then return Left
+    else return Suck
+
+In general, in addition to there being alternative algorithms for the same functions, such as sorting for example, there are many source-to-source transformations which preserve program semantics which can be applied recursively to the program code to produce new programs with identical behaviour.
+
+b) Yes - cf Alan Turing
+c) Yes
+d) Up to 2^n possible programs
+e) No, assuming the percepts sequence is unchanged.
+
+Ex 2.7
+# TODO - sanity-check these. Decide the evaluation model of this pseudocode language, or change them to a real language...
+function Goal-Based-Agent(percept) returns an action
+    persistent: state, model, goal, action
+    state <- Update-State(state, action, percept, model)
+    if Meets-Goal(state) then return Nop
+    queue <- New-Queue()
+    Push-Back(queue, [[], state])
+    while Not-Empty(queue) do
+        [as, s] <- Pop-Front(queue)
+        if Meets-Goal(s) then
+            return Head(as)
+        else
+            for each action a:
+                Push-Back(queue, [Cons(a, as), Predict-State(s, a)])
+
+function Utility-Based-Agent(percept) returns an action
+    persistent: state, model, utility-func, action
+    state <- Update-State(state, action, percept, model)
+    max-action <- Nop
+    max-util <- Predict-Utility(state, Nop, model)
+    for each action a:
+        util <- Predict-Utility(state, a, model)
+        if (util > max-util) then
+            max-action <- a
+            max-util <- util
+    return max-action
+
+Ex 2.8
+The thermostat is a reflex-based agent, since its action is entirely based on the latest percept.
+
+Ex 2.9 onwards will be in code.
