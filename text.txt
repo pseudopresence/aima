@@ -1,5 +1,5 @@
 ## Create a Unigram text model from the words in the book "Flatland".
->>> flatland = DataFile("flat11.txt").read()
+>>> flatland = DataFile("EN-text/flatland.txt").read()
 >>> wordseq = words(flatland)
 >>> P = UnigramTextModel(wordseq)
 
@@ -35,7 +35,7 @@ True
 ## demo
 
 ## Compare 1-, 2-, and 3-gram word models of the same text.
->>> flatland = DataFile("flat11.txt").read()
+>>> flatland = DataFile("EN-text/flatland.txt").read()
 >>> wordseq = words(flatland)
 >>> P1 = UnigramTextModel(wordseq)
 >>> P2 = NgramTextModel(2, wordseq)

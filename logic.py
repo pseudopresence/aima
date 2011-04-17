@@ -487,7 +487,7 @@ def pl_resolution(KB, alpha):
         for (ci, cj) in pairs:
             resolvents = pl_resolve(ci, cj)
             if FALSE in resolvents: return True
-            new.union_update(set(resolvents))
+            new.update(set(resolvents))
         if new.issubset(set(clauses)): return False
         for c in new:
             if c not in clauses: clauses.append(c)
@@ -495,7 +495,7 @@ def pl_resolution(KB, alpha):
 def pl_resolve(ci, cj):
     """Return all clauses that can be obtained by resolving clauses ci and cj.
     >>> pl_resolve(to_cnf(A|B|C), to_cnf(~B|~C|F))
-    [(A | C | ~C | F), (A | B | ~B | F)]
+    [(C | A | F | ~C), (B | F | A | ~B)]
     """
     clauses = []
     for di in disjuncts(ci):
@@ -574,8 +574,8 @@ def dpll_satisfiable(s):
     rather than True when it succeeds; this is more useful. (2) The
     function find_pure_symbol is passed a list of unknown clauses, rather
     than a list of all clauses and the model; this is more efficient.
-    >>> dpll_satisfiable(A&~B)
-    {A: True, B: False}
+    >>> sorted(dpll_satisfiable(A&~B).items())
+    [(A, True), (B, False)]
     >>> dpll_satisfiable(P&~P)
     False
     """
@@ -715,7 +715,7 @@ def unify(x, y, s):
     would make x,y equal, or None if x,y can not unify. x and y can be
     variables (e.g. Expr('x')), constants, lists, or Exprs. [Fig. 9.1]
     >>> unify(x + y, y + C, {})
-    {y: C, x: y}
+    {x: y, y: C}
     """
     if s == None:
         return None
@@ -759,8 +759,8 @@ def occur_check(var, x):
 
 def extend(s, var, val):
     """Copy the substitution s and extend it by setting var to val; return copy.
-    >>> extend({x: 1}, y, 2)
-    {y: 2, x: 1}
+    >>> sorted(extend({x: 1}, y, 2).items())
+    [(y, 2), (x, 1)]
     """
     s2 = s.copy()
     s2[var] = val

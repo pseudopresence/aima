@@ -215,7 +215,7 @@ class UnixConsultant(IRSystem):
     def __init__(self):
         IRSystem.__init__(self, stopwords="how do i the a of")
         import os
-        mandir = '../data/man/'
+        mandir = '../aima-data/MAN/'
         man_files = [mandir + f for f in os.listdir(mandir)]
         self.index_collection(man_files)
 

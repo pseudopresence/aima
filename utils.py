@@ -642,8 +642,8 @@ def AIMAFile(components, mode='r'):
     return open(apply(os.path.join, [dir] + components), mode)
 
 def DataFile(name, mode='r'):
-    "Return a file in the AIMA /data directory."
-    return AIMAFile(['..', 'data', name], mode)
+    "Return a file in the AIMA /aima-data directory."
+    return AIMAFile(['..', 'aima-data', name], mode)
 
 
 #______________________________________________________________________________

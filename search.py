@@ -605,7 +605,7 @@ class BoggleFinder:
 
     def __init__(self, board=None):
         if BoggleFinder.wordlist is None:
-            BoggleFinder.wordlist = Wordlist("../data/wordlist")
+            BoggleFinder.wordlist = Wordlist("../aima-data/EN-text/wordlist")
         self.found = {}
         if board:
             self.set_board(board)
